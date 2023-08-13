@@ -20,16 +20,11 @@ long current_millis = 0 ; // current millis() to compare
 
 void setup() {
 
-    Serial.begin(115200);           // initiate serial port for output to USB
-    Serial1.begin(230400);          // first serial port for reading lidar data 
-    pinMode(
-            MOTOR_MOSFET_PIN,
-            OUTPUT
-            );                      // set motor key pin to output mode 
-    digitalWrite(
-            MOTOR_MOSFET_PIN,
-            HIGH);                  // set motor key output to logical one mode 
-    memset(raw_data, 0, 256);       // reset the buffer
+    Serial.begin(115200);                  // initiate serial port for output to USB
+    Serial1.begin(230400);                 // first serial port for reading lidar data 
+    pinMode(MOTOR_MOSFET_PIN,OUTPUT);      // set motor key pin to output mode 
+    digitalWrite(MOTOR_MOSFET_PIN,HIGH);   // set motor key output to logical one mode 
+    memset(raw_data, 0, 256);              // reset the buffer
 }
 
 void loop() {
@@ -70,7 +65,7 @@ void loop() {
     }
 
 // if the data byte matches the packet header
-    if(raw_data[DATA_START_BYTE] == DATA_HEADER) {
+        if(raw_data[DATA_START_BYTE] == DATA_HEADER) {
 
         // get the payload length (2nd and 3rd bytes of raw data)
         uint16_t raw_data_length = (raw_data[SIZE_HI_BYTE] << 8) + raw_data[SIZE_LO_BYTE];
