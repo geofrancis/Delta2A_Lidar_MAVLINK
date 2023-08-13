@@ -61,12 +61,9 @@ int16_t Dist = 0;    // Distance to object in centimeters
 
 void loop()
 {
-lidarAngle = packet.angle_quad;
-messageAngle = map(lidarAngle, 0, 89, 0, 72);
-  bool got_packet;
-  
-  got_packet=lidar.processAvailable(&packet);
-  lidar.applyMotorPID();
+lidarAngle = angle ;
+messageAngle = map(lidarAngle, 0, 360, 0, 72);
+
 
   if(got_packet)
   {
@@ -85,7 +82,7 @@ messageAngle = map(lidarAngle, 0, 89, 0, 72);
 void readLIDAR(){
  
 
-
+/*
    // if the timeout has elapsed and the data is ready
     if(millis() - current_millis > lidar_delay && data_ready) {
         for(int i = 0; i < 360; i++) {
@@ -107,7 +104,7 @@ void readLIDAR(){
             data_ready = false;
         }
     }
-
+*/
    // read the start byte of the packet
     while(Serial1.available()) {
 
@@ -121,40 +118,24 @@ void readLIDAR(){
         }
     }
 
-// if the data byte matches the packet header
-        if(raw_data[DATA_START_BYTE] == DATA_HEADER) {
 
-        // get the payload length (2nd and 3rd bytes of raw data)
-        uint16_t raw_data_length = (raw_data[SIZE_HI_BYTE] << 8) + raw_data[SIZE_LO_BYTE];
-
-       // get checksum from raw data
-        uint16_t checksum = (raw_data[raw_data_length] << 8) + raw_data[raw_data_length+1];
-        delay(10);
-
-        // call the function for calculating the checksum
-        if (checksum == checksum_cmp(raw_data, raw_data_length)) {    // if the sum passed 
-
-            // calculation of the starting angle of this packet 
-            float start_angle = ((raw_data[START_ANGLE_HI_BYTE] << 8)
-                                    + raw_data[START_ANGLE_LO_BYTE])*0.01;
-
-            // count the number of distance samples: number of samples = (distance data size - 5) / 3 
-            uint8_t read_count = (raw_data[DISTANCE_DATA_SYZE] - 5) /  3;
-            for (int n = 0; n < read_count; n++){
-
-              // count the angle of each sample:
-              // angle = start angle + 22.5° * (sample number - 1)/ number of samples float angle = start_angle + 22.5 * ( n - 1
-                float angle = start_angle + 22.5 * (n - 1) / read_count;
-
-                // iterator for lidar_data array 
-                int i = int(angle);
-
-                // distance calculation
-                float distance = ((raw_data[FIRST_DIST_HI_BYTE+n*3] << 8)
-                                    + raw_data[FIRST_DIST_LO_BYTE+n*3]) * 0.25;
-
-                // writing the distance to the array 
-                lidar_data[i] = distance;
+ if(raw_data[DATA_START_BYTE] == DATA_HEADER) { // if the data byte matches the packet header
+ 
+ uint16_t raw_data_length = (raw_data[SIZE_HI_BYTE] << 8) + raw_data[SIZE_LO_BYTE]; // get the payload length (2nd and 3rd bytes of raw data)
+ 
+ uint16_t checksum = (raw_data[raw_data_length] << 8) + raw_data[raw_data_length+1]; // get checksum from raw data
+ delay(10);
+ 
+ if (checksum == checksum_cmp(raw_data, raw_data_length)) {// call the function for calculating the checksum
+    
+ float start_angle = ((raw_data[START_ANGLE_HI_BYTE] << 8) + raw_data[START_ANGLE_LO_BYTE])*0.01;  // calculation of the starting angle of this packet 
+ uint8_t read_count = (raw_data[DISTANCE_DATA_SYZE] - 5) /  3;    // count the number of distance samples: number of samples = (distance data size - 5) / 3 
+   for (int n = 0; n < read_count; n++){  // count the angle of each sample:  
+       float angle = start_angle + 22.5 * (n - 1) / read_count;  // angle = start angle + 22.5° * (sample number - 1)/ number of samples float angle = start_angle + 22.5 * ( n - 1
+      
+       int i = int(angle);  // iterator for lidar_data array 
+       float distance = ((raw_data[FIRST_DIST_HI_BYTE+n*3] << 8)+ raw_data[FIRST_DIST_LO_BYTE+n*3]) * 0.25; // distance calculation
+       lidar_data[i] = distance;     // writing the distance to the array 
             }
         }
         data_ready = true;
