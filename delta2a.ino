@@ -13,7 +13,7 @@
 // end of datasheet 
 // array to store distances 
 
-uint8_t raw_data [ 256 ]; 		  // buffer for storing "raw" data 
+uint8_t raw_data [ 256 ];       // buffer for storing "raw" data 
 bool data_ready = false ;   // data ready flag 
 long lidar_delay = 1000 ; // output interval to the serial port 
 long current_millis = 0 ; // current millis() to compare 
@@ -35,7 +35,7 @@ void loop() {
 
              // output text to serial monitor 
             Serial.print("Angle: ");
-	       	// if the angle is less than 10 
+          // if the angle is less than 10 
             if(i < 10){
                 Serial.print(" ");
             }
@@ -54,7 +54,7 @@ void loop() {
    // read the start byte of the packet
     while(Serial1.available()) {
 
-        // читаем стартовый байт пакета
+        // read the start byte of the packet
         if (Serial1.read() == (raw_data[0] = FRAME_HEADER)){
             for (int i = 1; i!= 256; i++){
 
@@ -75,7 +75,7 @@ void loop() {
         delay(10);
 
         // call the function for calculating the checksum
-        if (checksum == checksum_cmp(raw_data, raw_data_length)) { 		// if the sum passed 
+        if (checksum == checksum_cmp(raw_data, raw_data_length)) {    // if the sum passed 
 
             // calculation of the starting angle of this packet 
             float start_angle = ((raw_data[START_ANGLE_HI_BYTE] << 8)
@@ -86,7 +86,7 @@ void loop() {
             for (int n = 0; n < read_count; n++){
 
               // count the angle of each sample:
-							// angle = start angle + 22.5° * (sample number - 1)/ number of samples float angle = start_angle + 22.5 * ( n - 1
+              // angle = start angle + 22.5° * (sample number - 1)/ number of samples float angle = start_angle + 22.5 * ( n - 1
                 float angle = start_angle + 22.5 * (n - 1) / read_count;
 
                 // iterator for lidar_data array 
