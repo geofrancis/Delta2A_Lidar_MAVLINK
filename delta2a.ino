@@ -13,10 +13,10 @@
 // end of datasheet 
 // array to store distances 
 
-			  uint8_t raw_data [ 256 ]; 		  // buffer for storing "raw" data 
-			  bool data_ready = false ;   // data ready flag 
-			  long lidar_delay = 1000 ; // output interval to the serial port 
-			  long current_millis = 0 ; // current millis() to compare 
+uint8_t raw_data [ 256 ]; 		  // buffer for storing "raw" data 
+bool data_ready = false ;   // data ready flag 
+long lidar_delay = 1000 ; // output interval to the serial port 
+long current_millis = 0 ; // current millis() to compare 
 
 void setup() {
 
